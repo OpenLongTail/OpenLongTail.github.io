@@ -167,7 +167,7 @@ a.author-link:hover { color: #4fc3f7; }
     transition-delay: var(--d);
 }
 .ray-in { stroke: #81c784; filter: drop-shadow(0 0 6px rgba(129,199,132,.6)); }
-.ray.ray-rt { stroke-width: 4; filter: drop-shadow(0 0 9px rgba(120,170,255,.9)); }
+.ray.ray-rt { stroke: url(#raygv); stroke-width: 4; filter: drop-shadow(0 0 9px rgba(120,170,255,.9)); }
 .stage-core { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; text-align: center; pointer-events: none; }
 .stage-core .car {
     width: 66px; height: auto; display: block; margin: 0 auto;

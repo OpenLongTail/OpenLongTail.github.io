@@ -205,8 +205,12 @@ def build_transform(sid="s07"):
       non-front views under the target camera rig.</p>
     <div class="stage">
       <svg class="stage-rays" viewBox="0 0 920 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
-        <defs><linearGradient id="rayg" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#5aa8ff"/><stop offset="1" stop-color="#f3a3c8"/></linearGradient></defs>
+        <defs>
+          <linearGradient id="rayg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#5aa8ff"/><stop offset="1" stop-color="#f3a3c8"/></linearGradient>
+          <linearGradient id="raygv" gradientUnits="userSpaceOnUse" x1="460" y1="280" x2="460" y2="492">
+            <stop offset="0" stop-color="#5aa8ff"/><stop offset="1" stop-color="#f3a3c8"/></linearGradient>
+        </defs>
         {rays}
       </svg>
       <div class="stage-core" aria-hidden="true">
@@ -253,7 +257,7 @@ HTML = f"""<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="assets/css/index.css?v=14">
+<link rel="stylesheet" href="assets/css/index.css?v=15">
 </head>
 <body>
 
@@ -437,7 +441,7 @@ HTML = f"""<!DOCTYPE html>
 <div class="back-to-top-wrap"><button class="back-to-top" id="backTop">
   <i class="fas fa-arrow-up"></i><span class="back-to-top-label">Back to top</span></button></div>
 
-<script src="assets/js/main.js?v=14"></script>
+<script src="assets/js/main.js?v=15"></script>
 </body>
 </html>"""
 

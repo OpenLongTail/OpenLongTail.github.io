@@ -98,7 +98,7 @@ AUTHORS = [
     ("Wenyan Cong",    [4],    "https://www.wenyancong.com/", ""),
     ("Hezhen Hu",      [4],    "https://alexhu.top/", ""),
     ("Boris Ivanovic", [2],    "https://research.nvidia.com/labs/avg/author/boris-ivanovic/", ""),
-    ("Hao Wang",       [1],    "http://www.wanghao.in/", ""),
+    ("Hao Wang",       [1],    "https://haohww.github.io/", ""),
     ("Ziyao Zeng",     [5],    "https://vision.cs.yale.edu/members/ziyao-zeng.html", ""),
     ("Xinyu Gong",     [6],    "", ""),
     ("Yang Zhou",      [1],    "https://yangzhou.engr.tamu.edu/", ""),

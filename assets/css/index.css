@@ -167,6 +167,7 @@ a.author-link:hover { color: #4fc3f7; }
     transition-delay: var(--d);
 }
 .ray-in { stroke: #81c784; filter: drop-shadow(0 0 6px rgba(129,199,132,.6)); }
+.ray.ray-rt { stroke-width: 4; filter: drop-shadow(0 0 9px rgba(120,170,255,.9)); }
 .stage-core { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 2; text-align: center; pointer-events: none; }
 .stage-core .car {
     width: 66px; height: auto; display: block; margin: 0 auto;
@@ -210,8 +211,8 @@ a.author-link:hover { color: #4fc3f7; }
 .stage-view video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .stage-view.input { border-color: rgba(129,199,132,.75); box-shadow: 0 0 0 2px rgba(129,199,132,.4), 0 12px 32px rgba(0,0,0,.55); }
 .stage-view .vtag {
-    position: absolute; left: 6px; top: 6px; z-index: 2; font-size: .62rem; font-weight: 700; letter-spacing: .03em;
-    padding: .12rem .44rem; border-radius: 5px; background: rgba(0,0,0,.6); color: #cfe0f5; backdrop-filter: blur(4px);
+    position: absolute; left: 50%; top: 7px; transform: translateX(-50%); z-index: 2; font-size: .78rem; font-weight: 700; letter-spacing: .03em;
+    padding: .18rem .6rem; border-radius: 7px; background: rgba(0,0,0,.6); color: #cfe0f5; backdrop-filter: blur(4px); white-space: nowrap;
 }
 .stage-view.input .vtag { background: rgba(76,175,80,.32); color: #bdf0c2; }
 

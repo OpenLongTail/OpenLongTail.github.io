@@ -199,7 +199,7 @@ a.author-link:hover { color: #4fc3f7; }
     50%     { transform: scale(1.06); filter: drop-shadow(0 0 34px rgba(243,163,200,.6)); }
 }
 .stage-view {
-    position: absolute; width: 21.7%; aspect-ratio: 832 / 480; border-radius: 11px; overflow: hidden;
+    position: absolute; width: 21.7%; aspect-ratio: 832 / 480; border-radius: 11px; overflow: visible;
     background: #111; border: 1px solid rgba(255,255,255,.12); box-shadow: 0 12px 32px rgba(0,0,0,.55);
     opacity: 0; transform: translate(var(--tx), var(--ty)) scale(.4); z-index: 3;
 }
@@ -208,13 +208,28 @@ a.author-link:hover { color: #4fc3f7; }
     transition: opacity .6s ease, transform .75s cubic-bezier(.2,.75,.2,1);
     transition-delay: var(--d);
 }
-.stage-view video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.stage-view video { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: 10px; }
 .stage-view.input { border-color: rgba(129,199,132,.75); box-shadow: 0 0 0 2px rgba(129,199,132,.4), 0 12px 32px rgba(0,0,0,.55); }
 .stage-view .vtag {
     position: absolute; left: 50%; top: 7px; transform: translateX(-50%); z-index: 2; font-size: .98rem; font-weight: 700; letter-spacing: .03em;
     padding: .22rem .72rem; border-radius: 8px; background: rgba(0,0,0,.62); color: #cfe0f5; backdrop-filter: blur(4px); white-space: nowrap;
 }
 .stage-view.input .vtag { background: rgba(76,175,80,.32); color: #bdf0c2; }
+.stage-view .gtag {
+    position: absolute; left: 50%; top: -2.15rem; transform: translateX(-50%); z-index: 4;
+    font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+    padding: .28rem .85rem; border-radius: 999px; white-space: nowrap; color: #eef4ff;
+    text-align: center;
+    background: linear-gradient(135deg, rgba(90,168,255,.30), rgba(243,163,200,.30));
+    backdrop-filter: blur(13px) saturate(170%);
+    -webkit-backdrop-filter: blur(13px) saturate(170%);
+    border: 1px solid rgba(255,255,255,.28);
+    box-shadow: 0 8px 22px rgba(0,0,0,.38), inset 0 1px 0 rgba(255,255,255,.45);
+}
+.stage-view.input .gtag {
+    background: linear-gradient(135deg, rgba(129,199,132,.34), rgba(129,199,132,.16));
+    color: #eafbe9; border: 1px solid rgba(170,225,170,.45); font-weight: 900;
+}
 
 @media (max-width: 760px) {
     .stage { aspect-ratio: auto; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-width: 460px; }

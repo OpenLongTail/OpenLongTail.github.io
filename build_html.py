@@ -175,7 +175,7 @@ def build_eval_table():
 def build_transform(sid="s07"):
     # key, label, role, left%, top%, tx, ty, delay, ray-x2, ray-y2
     P = [
-        ("front", "Front · Input", "input", "39.13%", "2.14%", "0px", "120px", ".15s", 460, 78),
+        ("front", "Front", "input", "39.13%", "2.14%", "0px", "120px", ".15s", 460, 78),
         ("cl", "Cross-Left",  "gen", "4.35%",  "20.9%", "188px",  "58px",  ".70s", 150, 178),
         ("cr", "Cross-Right", "gen", "73.9%",  "20.9%", "-188px", "58px",  ".85s", 770, 178),
         ("rl", "Rear-Left",   "gen", "4.35%",  "73.6%", "188px",  "-112px", "1.00s", 150, 462),
@@ -195,6 +195,7 @@ def build_transform(sid="s07"):
             src, pos = f"{VID}/{sid}_front.mp4", f"{POS}/{sid}_front.jpg"
             cls = "stage-view input"
         views += (f'<div class="{cls}" style="left:{left};top:{top};--tx:{tx};--ty:{ty};--d:{d}">'
+                  f'<span class="gtag">{"Generated" if role == "gen" else "Input"}</span>'
                   f'<span class="vtag">{label}</span>'
                   f'<video {v_attrs(src, pos)}></video></div>')
     return f'''<!-- SINGLE -> MULTI STAGE -->
@@ -257,7 +258,7 @@ HTML = f"""<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="assets/css/index.css?v=15">
+<link rel="stylesheet" href="assets/css/index.css?v=18">
 </head>
 <body>
 
@@ -441,7 +442,7 @@ HTML = f"""<!DOCTYPE html>
 <div class="back-to-top-wrap"><button class="back-to-top" id="backTop">
   <i class="fas fa-arrow-up"></i><span class="back-to-top-label">Back to top</span></button></div>
 
-<script src="assets/js/main.js?v=15"></script>
+<script src="assets/js/main.js?v=18"></script>
 </body>
 </html>"""
 

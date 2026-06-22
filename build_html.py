@@ -253,7 +253,7 @@ HTML = f"""<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="assets/css/index.css?v=13">
+<link rel="stylesheet" href="assets/css/index.css?v=14">
 </head>
 <body>
 
@@ -437,7 +437,7 @@ HTML = f"""<!DOCTYPE html>
 <div class="back-to-top-wrap"><button class="back-to-top" id="backTop">
   <i class="fas fa-arrow-up"></i><span class="back-to-top-label">Back to top</span></button></div>
 
-<script src="assets/js/main.js?v=13"></script>
+<script src="assets/js/main.js?v=14"></script>
 </body>
 </html>"""
 

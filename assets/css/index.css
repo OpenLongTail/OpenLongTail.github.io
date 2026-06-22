@@ -211,8 +211,8 @@ a.author-link:hover { color: #4fc3f7; }
 .stage-view video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .stage-view.input { border-color: rgba(129,199,132,.75); box-shadow: 0 0 0 2px rgba(129,199,132,.4), 0 12px 32px rgba(0,0,0,.55); }
 .stage-view .vtag {
-    position: absolute; left: 50%; top: 7px; transform: translateX(-50%); z-index: 2; font-size: .78rem; font-weight: 700; letter-spacing: .03em;
-    padding: .18rem .6rem; border-radius: 7px; background: rgba(0,0,0,.6); color: #cfe0f5; backdrop-filter: blur(4px); white-space: nowrap;
+    position: absolute; left: 50%; top: 7px; transform: translateX(-50%); z-index: 2; font-size: .98rem; font-weight: 700; letter-spacing: .03em;
+    padding: .22rem .72rem; border-radius: 8px; background: rgba(0,0,0,.62); color: #cfe0f5; backdrop-filter: blur(4px); white-space: nowrap;
 }
 .stage-view.input .vtag { background: rgba(76,175,80,.32); color: #bdf0c2; }
 

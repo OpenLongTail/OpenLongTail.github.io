@@ -88,6 +88,15 @@
     });
   }
 
+  /* ---------- Single -> Multi stage: replay fan-out on scroll ---------- */
+  const stage = document.querySelector(".stage");
+  if (stage) {
+    const stageObs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => stage.classList.toggle("playing", e.isIntersecting));
+    }, { threshold: 0.35 });
+    stageObs.observe(stage);
+  }
+
   /* ---------- Nav + back-to-top visibility ---------- */
   const onScroll = () => {
     const y = window.scrollY;
@@ -113,7 +122,7 @@
       }
     });
   }, { rootMargin: "-45% 0px -50% 0px", threshold: 0 });
-  ["abstract", "gallery", "eval", "external", "method", "citation"].forEach((id) => {
+  ["abstract", "expand", "gallery", "eval", "external", "method", "citation"].forEach((id) => {
     const el = document.getElementById(id);
     if (el) secObs.observe(el);
   });

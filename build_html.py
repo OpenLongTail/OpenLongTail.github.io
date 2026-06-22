@@ -133,8 +133,8 @@ def build_eval_table():
         ("+ SFT (10K Rand)", False,       ["0.659","25.0","0.670","0.0","0.733","0.0","0.936","0.0","0.716","11.1"]),
         ("+ SFT (10K + NV-OOD GT)", False,["0.743","0.0","0.688","0.0","0.758","0.0","0.938","0.0","0.764","0.0"]),
         ("+ SFT (10K + NV-OOD Syn)", True,["0.747","0.0","0.662","0.0","0.717","0.0","0.935","0.0","0.748","0.0"]),
-        ("+ SFT (10K + NV GT + Waymo GT)", False, ["0.691","12.5","0.691","0.0","0.735","0.0","0.958","0.0","0.736","5.6"]),
-        ("+ SFT (10K + NV Syn + Waymo Syn)", True, ["0.699","12.5","0.689","0.0","0.765","0.0","0.950","0.0","0.748","5.6"]),
+        ("+ SFT (10K + NV-OOD GT + Waymo-E2E GT)", False, ["0.691","12.5","0.691","0.0","0.735","0.0","0.958","0.0","0.736","5.6"]),
+        ("+ SFT (10K + NV-OOD Syn + Waymo-E2E Syn)", True, ["0.699","12.5","0.689","0.0","0.765","0.0","0.950","0.0","0.748","5.6"]),
     ]
     # mark Avg AS (index 8) and Avg CR (index 9): best=bold, 2nd=underline
     def cell(val, col, is_cr):
@@ -172,6 +172,67 @@ def build_eval_table():
       <tbody>{body}</tbody>
     </table></div>'''
 
+def build_transform(sid="s07"):
+    # key, label, role, left%, top%, tx, ty, delay, ray-x2, ray-y2
+    P = [
+        ("front", "Front · Input", "input", "39.13%", "2.14%", "0px", "120px", ".15s", 460, 78),
+        ("cl", "Cross-Left",  "gen", "4.35%",  "20.9%", "188px",  "58px",  ".70s", 150, 178),
+        ("cr", "Cross-Right", "gen", "73.9%",  "20.9%", "-188px", "58px",  ".85s", 770, 178),
+        ("rl", "Rear-Left",   "gen", "4.35%",  "73.6%", "188px",  "-112px", "1.00s", 150, 462),
+        ("rr", "Rear-Right",  "gen", "73.9%",  "73.6%", "-188px", "-112px", "1.15s", 770, 462),
+        ("rt", "Rear-Tele",   "gen", "39.13%", "78.9%", "0px",    "-130px", ".90s", 460, 492),
+    ]
+    # input ray: front view feeds into the core
+    rays = '<line class="ray ray-in" x1="460" y1="116" x2="460" y2="234" pathLength="1" style="--d:.35s"/>'
+    views = ""
+    for key, label, role, left, top, tx, ty, d, cx, cy in P:
+        if role == "gen":
+            rays += f'<line class="ray" x1="460" y1="280" x2="{cx}" y2="{cy}" pathLength="1" style="--d:{d}"/>'
+            src, pos = f"{VID}/{sid}_pred_{key}.mp4", f"{POS}/{sid}_pred_{key}.jpg"
+            cls = "stage-view"
+        else:
+            src, pos = f"{VID}/{sid}_front.mp4", f"{POS}/{sid}_front.jpg"
+            cls = "stage-view input"
+        views += (f'<div class="{cls}" style="left:{left};top:{top};--tx:{tx};--ty:{ty};--d:{d}">'
+                  f'<span class="vtag">{label}</span>'
+                  f'<video {v_attrs(src, pos)}></video></div>')
+    return f'''<!-- SINGLE -> MULTI STAGE -->
+<section class="content-section stage-section" id="expand">
+  <div class="container wide">
+    <h2 class="section-title">From a Single View to a Full Surround Rig</h2>
+    <p class="section-sub">OpenLongTail extrapolates one observed monocular front view into five synchronized
+      non-front views under the target camera rig.</p>
+    <div class="stage">
+      <svg class="stage-rays" viewBox="0 0 920 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <defs><linearGradient id="rayg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#5aa8ff"/><stop offset="1" stop-color="#f3a3c8"/></linearGradient></defs>
+        {rays}
+      </svg>
+      <div class="stage-core" aria-hidden="true">
+        <svg class="car" viewBox="0 0 80 124" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="carbody" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#1c2738"/><stop offset="1" stop-color="#0b0f17"/></linearGradient>
+            <linearGradient id="caredge" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#5aa8ff"/><stop offset="1" stop-color="#f3a3c8"/></linearGradient>
+          </defs>
+          <rect x="16" y="6" width="48" height="112" rx="20" fill="url(#carbody)" stroke="url(#caredge)" stroke-width="2.2"/>
+          <rect x="8" y="40" width="9" height="8" rx="3" fill="url(#carbody)" stroke="url(#caredge)" stroke-width="1.4"/>
+          <rect x="63" y="40" width="9" height="8" rx="3" fill="url(#carbody)" stroke="url(#caredge)" stroke-width="1.4"/>
+          <path d="M24,41 Q40,31 56,41 L52,53 Q40,48 28,53 Z" fill="rgba(143,196,255,.55)"/>
+          <rect x="27" y="55" width="26" height="28" rx="8" fill="rgba(160,200,255,.16)"/>
+          <path d="M28,85 Q40,81 52,85 L56,97 Q40,91 24,97 Z" fill="rgba(243,163,200,.5)"/>
+          <rect x="22" y="9" width="9" height="5" rx="2.5" fill="#d6ecff"/>
+          <rect x="49" y="9" width="9" height="5" rx="2.5" fill="#d6ecff"/>
+          <rect x="22" y="110" width="9" height="4" rx="2" fill="#ff9bb0"/>
+          <rect x="49" y="110" width="9" height="4" rx="2" fill="#ff9bb0"/>
+        </svg>
+      </div>
+      {views}
+    </div>
+  </div>
+</section>'''
+
 gallery_cards = "".join(scene_card(*s) for s in SCENES if s[4])
 wild_cards = "".join(scene_card(*s) for s in SCENES if not s[4])
 
@@ -191,15 +252,16 @@ HTML = f"""<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="assets/css/index.css">
+<link rel="stylesheet" href="assets/css/index.css?v=12">
 </head>
 <body>
 
 <nav class="section-nav"><div class="section-nav-inner">
   <a class="section-nav-link" href="#abstract">Abstract</a>
+  <a class="section-nav-link" href="#expand">Single &rarr; Multi</a>
   <a class="section-nav-link" href="#gallery">Multi-View Gallery</a>
   <a class="section-nav-link" href="#eval">Evaluation</a>
-  <a class="section-nav-link" href="#external">External Helps NV</a>
+  <a class="section-nav-link" href="#external">Cross-Source Scaling</a>
   <a class="section-nav-link" href="#method">Method</a>
   <a class="section-nav-link" href="#citation">BibTeX</a>
 </div></nav>
@@ -261,29 +323,36 @@ HTML = f"""<!DOCTYPE html>
     <h2 class="section-title">Abstract</h2>
     <div class="tldr-card">
       <p class="tldr-text"><span class="tldr-label">TL;DR</span>
-        OpenLongTail turns <span class="tldr-emphasis">monocular dash-cam long-tail videos</span> into
-        synchronized, pose-grounded <span class="tldr-emphasis">multi-view training assets</span>, improving
-        closed-loop driving robustness to a level comparable with real multi-camera capture.</p>
+        OpenLongTail is an <span class="tldr-emphasis">open-scaling generative data engine</span> that converts heterogeneous
+        long-tail driving videos into <span class="tldr-emphasis">pose-grounded, multi-view data</span>, enabling scalable
+        VLA policy learning from heterogeneous sources.</p>
     </div>
     <div class="abstract-centered-text">
       <p class="content-text">Scaling robust driving policies is fundamentally bottlenecked by the scarcity of edge cases
         in curated datasets. While the real world continuously captures these critical events, such long-tail events remain
-        underutilized when collected from heterogeneous sources, which often lack the full view coverage required for training
-        policy models. We introduce <b>OpenLongTail</b>, an open-source generative data engine for scaling autonomous driving
-        policies under long-tail events. We develop a pose-informed extrapolative view synthesis pipeline that generates the
-        missing context, and enhance cross-view consistency and temporal alignment by injecting Pl&uuml;cker ray geometry into a
-        scalable generation engine. Synthesizing heterogeneous long-tail data yields significant improvements in closed-loop
-        driving robustness, validated through extrapolative view synthesis and ego-trajectory recovery metrics.</p>
+        underutilized when collected from heterogeneous sources. Specifically, diverse but valuable in-the-wild long-tail
+        videos lack the full view coverage required for training policy models, often missing multi-view poses or originating
+        solely from monocular dash cameras. This modality gap prevents these observations from being converted into scalable
+        training data for long-tail generalization. We introduce <b>OpenLongTail</b>, an open-source generative data engine for
+        scaling autonomous driving policies under long-tail events. To transform heterogeneous data sources into view-aligned
+        and temporally coherent multi-view assets that are useful for policy learning, we develop a pose-informed extrapolative
+        view synthesis pipeline that generates the missing context. We further enhance cross-view consistency and the temporal
+        alignment for the newly generated views by injecting Pl&uuml;cker ray geometry into the scalable generation engine. By
+        synthesizing heterogeneous long-tail data, we observe a significant improvement in closed-loop driving robustness in
+        handling long-tail events. By measuring the extrapolative view synthesis and pose metrics, we validate the effectiveness
+        of OpenLongTail in visual fidelity, cross-view consistency, and ego-trajectory recovery.</p>
     </div>
   </div>
 </section>
+
+{build_transform()}
 
 <!-- GALLERY -->
 <section class="content-section alt" id="gallery">
   <div class="container wide">
     <h2 class="section-title">Multi-View Generation Gallery</h2>
-    <p class="section-sub">From a single front-view input, OpenLongTail synthesizes five surround views under the target rig.
-      Toggle each card between <b>Generated</b> and <b>Ground&nbsp;Truth</b>. The input (front) is always real.</p>
+    <p class="section-sub">From an observed front-view video, OpenLongTail synthesizes five non-front views under a target camera rig.
+      Toggle each card between <b>Generated</b> and <b>Ground&nbsp;Truth</b>. The front input view is always the original observation.</p>
     <div class="speed-control"><span class="lbl">Playback speed</span>
       <button class="speed-btn" data-speed="0.5">0.5&times;</button>
       <button class="speed-btn active" data-speed="1">1&times;</button>
@@ -295,37 +364,44 @@ HTML = f"""<!DOCTYPE html>
 <!-- EVALUATION -->
 <section class="content-section" id="eval">
   <div class="container wide">
-    <h2 class="section-title">Closed-Loop Evaluation in AlpaSim</h2>
+    <h2 class="section-title">OpenLongTail Improves VLA Driving Policies</h2>
+    <p class="section-subtitle">Closed-Loop Evaluation in AlpaSim</p>
     <p class="section-sub">Fine-tuning Alpamayo-R1 with OpenLongTail-synthesized multi-view data improves closed-loop
-      driving robustness on 53 long-tail events, on par with training on real multi-camera capture.
+      driving robustness on 53 long-tail events, on par with training on ground-truth multi-camera capture.
       AS = AlpaSim Score (higher is better); CR = Collision Rate (lower is better).</p>
     {build_eval_table()}
-    <p class="fig-caption">OpenLongTail-synthesized data (<b>Ours</b>) lifts average AS to 0.748 and drives collision rate
-      to 0.0%, comparable to training on ground-truth multi-view data (0.764 AS).</p>
+    <p class="fig-caption">OpenLongTail-synthesized data (<b>Ours</b>) lifts average AS to 0.748 and reduces the collision rate
+      to 0.0%, comparable to training on ground-truth multi-view data (0.764 AS).
+      <br><span style="opacity:.8">SFT: supervised fine-tuning &nbsp;&middot;&nbsp; 10K Rand: 10K randomly sampled trajectories &nbsp;&middot;&nbsp;
+      NV-OOD: NVIDIA PAV out-of-distribution subset &nbsp;&middot;&nbsp; GT: ground-truth multi-view &nbsp;&middot;&nbsp;
+      Syn: OpenLongTail-synthesized multi-view.</span></p>
   </div>
 </section>
 
-<!-- EXTERNAL HELPS NV -->
+<!-- CROSS-SOURCE SCALING -->
 <section class="content-section alt" id="external">
   <div class="container wide">
-    <h2 class="section-title">External Sources Like Waymo Can Help NV</h2>
-    <p class="section-sub">OpenLongTail converts external monocular videos (e.g. Waymo E2E) into target-rig
-      multi-view assets, expanding the long-tail training pool. Adding both NV and external synthesized data
-      produces more scene-consistent closed-loop rollouts across uncommon vehicles, cyclists, and complex intersections.</p>
-    <img class="method-image" src="assets/img/external_waymo.png" alt="Closed-loop benefits of generative scaling with external sources">
-    <p class="fig-caption">Closed-loop BEV rollouts of Alpamayo&nbsp;R1 versus variants augmented with OpenLongTail
-      assets from NV data and from NV + external (Waymo) sources. Generated data expands useful long-tail coverage
-      rather than merely increasing sample count.</p>
+    <h2 class="section-title">Generative Scaling Across Diverse Sources</h2>
+    <p class="section-sub">OpenLongTail converts external monocular videos (e.g., Waymo E2E) into target-rig
+      multi-view assets, expanding the long-tail training pool. Combining in-house (NVIDIA PAV) and external
+      synthesized data yields more scene-consistent closed-loop rollouts across uncommon vehicles, cyclists,
+      and complex intersections.</p>
+    <img class="method-image" src="assets/img/external_waymo.png" alt="Closed-loop benefits of generative scaling across sources">
+    <p class="fig-caption">Closed-loop bird's-eye-view rollouts of Alpamayo-R1 versus variants fine-tuned with
+      OpenLongTail-synthesized assets from NVIDIA PAV data and from PAV combined with an external source (Waymo E2E).
+      Generative scaling expands useful long-tail coverage rather than merely increasing the number of training samples.</p>
   </div>
 </section>
 
 <!-- METHOD -->
 <section class="content-section" id="method">
   <div class="container">
-    <h2 class="section-title">How It Works</h2>
+    <h2 class="section-title">Method Overview</h2>
     <img class="method-image" src="assets/img/pipeline.png?v=6" alt="OpenLongTail pipeline overview">
-    <p class="fig-caption">Given a long-tail front-view video, OpenLongTail recovers a metric ego-trajectory, builds pose-aware
-      geometric conditions, and synthesizes synchronized non-front views within a Wan&nbsp;2.1-VACE backbone.</p>
+    <p class="fig-caption">Given a long-tail front-view driving video, OpenLongTail first recovers a motion-consistent metric
+      ego-trajectory and uses it to construct pose-aware geometric conditions. The generation model combines Pl&uuml;cker-ray
+      geometry, temporal depth warping, and a cross-view memory bank within a Wan&nbsp;2.1-VACE backbone to synthesize
+      synchronized non-front views under the target camera rig.</p>
     <div class="feature-grid">
       <div class="feature"><span class="fi"><i class="fas fa-route"></i></span><h3>Metric Pose Recovery</h3>
         <p>MapAnything recovers a metric-scale ego-trajectory, stabilized by Kalman + RTS smoothing for jitter-free pose conditioning.</p></div>
@@ -360,7 +436,7 @@ HTML = f"""<!DOCTYPE html>
 <div class="back-to-top-wrap"><button class="back-to-top" id="backTop">
   <i class="fas fa-arrow-up"></i><span class="back-to-top-label">Back to top</span></button></div>
 
-<script src="assets/js/main.js"></script>
+<script src="assets/js/main.js?v=12"></script>
 </body>
 </html>"""
 

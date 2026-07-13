@@ -241,10 +241,14 @@ def build_transform(sid="s07"):
 gallery_cards = "".join(scene_card(*s) for s in SCENES if s[4])
 wild_cards = "".join(scene_card(*s) for s in SCENES if not s[4])
 
-BIBTEX = """@inproceedings{openlongtail2026,
-  title     = {OpenLongTail: Generative Scaling of Long-Tail Driving Data},
-  author    = {Liu, Lulin and Chen, Nuo and Wang, Yan and Liu, Bangya and Cong, Wenyan and Hu, Hezhen and Ivanovic, Boris and Wang, Hao and Zeng, Ziyao and Gong, Xinyu and Zhou, Yang and Xiong, Zixiang and Wang, Dilin and Wang, Zhangyang and Shi, Weisong and Zhang, Ruohan and Pavone, Marco and Fan, Zhiwen},
-  year      = {2026}
+BIBTEX = """@misc{liu2026openlongtailgenerativescalinglongtail,
+      title={OpenLongTail: Generative Scaling of Long-Tail Driving Data},
+      author={Lulin Liu and Nuo Chen and Yan Wang and Bangya Liu and Wenyan Cong and Hezhen Hu and Boris Ivanovic and Hao Wang and Ziyao Zeng and Xinyu Gong and Yang Zhou and Zixiang Xiong and Dilin Wang and Zhangyang Wang and Weisong Shi and Ruohan Zhang and Marco Pavone and Zhiwen Fan},
+      year={2026},
+      eprint={2607.09655},
+      archivePrefix={arXiv},
+      primaryClass={cs.CV},
+      url={https://arxiv.org/abs/2607.09655},
 }"""
 
 HTML = f"""<!DOCTYPE html>

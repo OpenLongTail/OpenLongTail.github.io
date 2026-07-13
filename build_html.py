@@ -99,10 +99,10 @@ AUTHORS = [
     ("Hezhen Hu",      [4],    "https://alexhu.top/", ""),
     ("Boris Ivanovic", [2],    "https://research.nvidia.com/labs/avg/author/boris-ivanovic/", ""),
     ("Hao Wang",       [1],    "https://haohww.github.io/", ""),
-    ("Ziyao Zeng",     [5],    "https://vision.cs.yale.edu/members/ziyao-zeng.html", ""),
+    ("Ziyao Zeng",     [5],    "https://adonis-galaxy.github.io/homepage/", ""),
     ("Xinyu Gong",     [6],    "", ""),
-    ("Yang Zhou",      [1],    "https://yangzhou.engr.tamu.edu/", ""),
-    ("Zixiang Xiong",  [1],    "https://engineering.tamu.edu/electrical/profiles/zxiong.html", ""),
+    ("Yang Zhou",      [1],    "https://engineering.tamu.edu/civil/profiles/zhou-yang.html", ""),
+    ("Zixiang Xiong",  [1],    "https://people.engr.tamu.edu/zixiang-xiong/index.html", ""),
     ("Dilin Wang",     [7],    "https://wdilin.github.io/", ""),
     ("Zhangyang Wang", [4],    "https://vita-group.github.io/", ""),
     ("Weisong Shi",    [8],    "https://www.cis.udel.edu/people/faculty/weisong-shi/", ""),
@@ -194,7 +194,8 @@ def build_transform(sid="s07"):
         else:
             src, pos = f"{VID}/{sid}_front.mp4", f"{POS}/{sid}_front.jpg"
             cls = "stage-view input"
-        views += (f'<div class="{cls}" style="left:{left};top:{top};--tx:{tx};--ty:{ty};--d:{d}">'
+        vd = "1.30s" if key == "rt" else d  # panel enters later than its ray for rear-tele
+        views += (f'<div class="{cls}" style="left:{left};top:{top};--tx:{tx};--ty:{ty};--d:{vd}">'
                   f'<span class="gtag">{"Generated" if role == "gen" else "Input"}</span>'
                   f'<span class="vtag">{label}</span>'
                   f'<video {v_attrs(src, pos)}></video></div>')
@@ -202,8 +203,6 @@ def build_transform(sid="s07"):
 <section class="content-section stage-section" id="expand">
   <div class="container wide">
     <h2 class="section-title">From a Single View to a Full Surround Rig</h2>
-    <p class="section-sub">OpenLongTail extrapolates one observed monocular front view into five synchronized
-      non-front views under the target camera rig.</p>
     <div class="stage">
       <svg class="stage-rays" viewBox="0 0 920 560" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
         <defs>
@@ -254,11 +253,13 @@ HTML = f"""<!DOCTYPE html>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>OpenLongTail: Generative Scaling of Long-Tail Driving Data</title>
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg?v=1">
+<link rel="mask-icon" href="assets/favicon.svg" color="#5aa8ff">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="assets/css/index.css?v=18">
+<link rel="stylesheet" href="assets/css/index.css?v=19">
 </head>
 <body>
 
@@ -320,8 +321,19 @@ HTML = f"""<!DOCTYPE html>
       <a class="link-button" href="#" onclick="return false;"><i class="fab fa-github"></i> Code</a>
     </div>
   </div>
-  <a class="scroll-hint" href="#abstract"><i class="fas fa-chevron-down"></i></a>
+  <a class="scroll-hint" href="#overview"><i class="fas fa-chevron-down"></i></a>
 </header>
+
+<!-- MOTIVATION / OVERVIEW VIDEO -->
+<section class="content-section teaser-section" id="overview">
+  <div class="container">
+    <div class="teaser-video-wrap">
+      <video class="teaser-video" autoplay muted loop playsinline controls preload="auto">
+        <source src="{VID}/motivation.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+</section>
 
 <!-- ABSTRACT -->
 <section class="content-section" id="abstract">

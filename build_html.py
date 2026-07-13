@@ -320,8 +320,8 @@ HTML = f"""<!DOCTYPE html>
     <div class="affiliations">{render_affils()}</div>
     <div class="author-notes"><sup>*</sup>Equal contribution &nbsp;&nbsp; <sup>&dagger;</sup>Corresponding author</div>
     <div class="links">
-      <a class="link-button" href="#" onclick="return false;"><i class="fas fa-file-pdf"></i> Paper</a>
-      <a class="link-button" href="#" onclick="return false;"><i class="ai ai-arxiv"></i> arXiv</a>
+      <a class="link-button" href="https://arxiv.org/pdf/2607.09655" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i> Paper</a>
+      <a class="link-button" href="https://arxiv.org/abs/2607.09655" target="_blank" rel="noopener"><i class="ai ai-arxiv"></i> arXiv</a>
       <a class="link-button" href="#" onclick="return false;"><i class="fab fa-github"></i> Code</a>
     </div>
   </div>

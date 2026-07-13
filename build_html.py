@@ -322,7 +322,7 @@ HTML = f"""<!DOCTYPE html>
     <div class="links">
       <a class="link-button" href="https://arxiv.org/pdf/2607.09655" target="_blank" rel="noopener"><i class="fas fa-file-pdf"></i> Paper</a>
       <a class="link-button" href="https://arxiv.org/abs/2607.09655" target="_blank" rel="noopener"><i class="ai ai-arxiv"></i> arXiv</a>
-      <a class="link-button" href="#" onclick="return false;"><i class="fab fa-github"></i> Code</a>
+      <a class="link-button" href="https://github.com/phai-lab/OpenLongTail" target="_blank" rel="noopener"><i class="fab fa-github"></i> Code</a>
     </div>
   </div>
   <a class="scroll-hint" href="#overview"><i class="fas fa-chevron-down"></i></a>

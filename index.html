@@ -217,11 +217,11 @@
 <section class="content-section" id="method">
   <div class="container">
     <h2 class="section-title">Method Overview</h2>
-    <img class="method-image" src="assets/img/pipeline.png?v=6" alt="OpenLongTail pipeline overview">
-    <p class="fig-caption">Given a long-tail front-view driving video, OpenLongTail first recovers a motion-consistent metric
-      ego-trajectory and uses it to construct pose-aware geometric conditions. The generation model combines Pl&uuml;cker-ray
-      geometry, temporal depth warping, and a cross-view memory bank within a Wan&nbsp;2.1-VACE backbone to synthesize
-      synchronized non-front views under the target camera rig.</p>
+    <img class="method-image" src="assets/img/pipeline.png?v=7" alt="OpenLongTail pipeline overview">
+    <p class="fig-caption">Given a long-tail front-view driving video, OpenLongTail recovers a metric-scale ego-trajectory
+      and synthesizes five target views under a target camera rig. Cross-left (CL) and cross-right (CR) views are generated
+      with front-anchored view extrapolation, while three rear views are jointly generated with masked view-level attention
+      and road-surface guidance. Together with the input front view, the outputs form synchronized, posed multi-view assets.</p>
     <div class="feature-grid">
       <div class="feature"><span class="fi"><i class="fas fa-route"></i></span><h3>Metric Pose Recovery</h3>
         <p>MapAnything recovers a metric-scale ego-trajectory, stabilized by Kalman + RTS smoothing for jitter-free pose conditioning.</p></div>

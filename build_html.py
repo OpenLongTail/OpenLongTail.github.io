@@ -22,6 +22,7 @@ SCENES = [
 
 VID = "assets/videos"
 POS = "assets/posters"
+MV = "?v=2"  # scene clip/poster version: bump whenever those files are replaced
 
 def v_attrs(src, poster):
     return (f'preload="none" muted loop playsinline poster="{poster}" '
@@ -30,17 +31,17 @@ def v_attrs(src, poster):
 def view_cell(sid, view, has_gt, is_input=False):
     """One cell in the surround grid."""
     if is_input:
-        src = f"{VID}/{sid}_front.mp4"
-        pos = f"{POS}/{sid}_front.jpg"
+        src = f"{VID}/{sid}_front.mp4{MV}"
+        pos = f"{POS}/{sid}_front.jpg{MV}"
         return (f'<div class="view-cell is-input">'
                 f'<span class="view-tag">Input · Front</span>'
                 f'<video {v_attrs(src, pos)}></video></div>')
-    pred = f"{VID}/{sid}_pred_{view}.mp4"
-    pos = f"{POS}/{sid}_pred_{view}.jpg"
+    pred = f"{VID}/{sid}_pred_{view}.mp4{MV}"
+    pos = f"{POS}/{sid}_pred_{view}.jpg{MV}"
     extra = ""
     vid_class = ""
     if has_gt:
-        gt = f"{VID}/{sid}_gt_{view}.mp4"
+        gt = f"{VID}/{sid}_gt_{view}.mp4{MV}"
         extra = f' data-pred="{pred}" data-gt="{gt}"'
         vid_class = ' class="switch"'
     return (f'<div class="view-cell">'
@@ -74,8 +75,8 @@ def mosaic_tiles():
     idx = 0
     for sid, name, *_ in SCENES:
         for view in order:
-            src = f"{VID}/{sid}_pred_{view}.mp4"
-            pos = f"{POS}/{sid}_pred_{view}.jpg"
+            src = f"{VID}/{sid}_pred_{view}.mp4{MV}"
+            pos = f"{POS}/{sid}_pred_{view}.jpg{MV}"
             hidden = "" if idx < 20 else " mosaic-hidden"
             tiles.append(
                 f'<div class="tile{hidden}">'
@@ -189,10 +190,10 @@ def build_transform(sid="s07"):
         if role == "gen":
             cls_ray = "ray ray-rt" if key == "rt" else "ray"
             rays += f'<line class="{cls_ray}" x1="460" y1="280" x2="{cx}" y2="{cy}" pathLength="1" style="--d:{d}"/>'
-            src, pos = f"{VID}/{sid}_pred_{key}.mp4", f"{POS}/{sid}_pred_{key}.jpg"
+            src, pos = f"{VID}/{sid}_pred_{key}.mp4{MV}", f"{POS}/{sid}_pred_{key}.jpg{MV}"
             cls = "stage-view"
         else:
-            src, pos = f"{VID}/{sid}_front.mp4", f"{POS}/{sid}_front.jpg"
+            src, pos = f"{VID}/{sid}_front.mp4{MV}", f"{POS}/{sid}_front.jpg{MV}"
             cls = "stage-view input"
         vd = "1.30s" if key == "rt" else d  # panel enters later than its ray for rear-tele
         views += (f'<div class="{cls}" style="left:{left};top:{top};--tx:{tx};--ty:{ty};--d:{vd}">'
@@ -333,7 +334,7 @@ HTML = f"""<!DOCTYPE html>
   <div class="container">
     <div class="teaser-video-wrap">
       <video class="teaser-video" autoplay muted loop playsinline controls preload="auto">
-        <source src="{VID}/motivation.mp4" type="video/mp4">
+        <source src="{VID}/motivation.mp4?v=2" type="video/mp4">
       </video>
     </div>
   </div>
@@ -458,7 +459,7 @@ HTML = f"""<!DOCTYPE html>
 <div class="back-to-top-wrap"><button class="back-to-top" id="backTop">
   <i class="fas fa-arrow-up"></i><span class="back-to-top-label">Back to top</span></button></div>
 
-<script src="assets/js/main.js?v=18"></script>
+<script src="assets/js/main.js?v=19"></script>
 </body>
 </html>"""
 

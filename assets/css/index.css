@@ -327,6 +327,15 @@ a.author-link:hover { color: #4fc3f7; }
 .eval-table .u { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: rgba(255,255,255,.5); }
 .eval-table tbody tr.ours { background: linear-gradient(90deg, rgba(90,168,255,.16), rgba(243,163,200,.10)); }
 .eval-table tbody tr.ours td.method { color: #fff; font-weight: 600; }
+/* paper-style Table 2: training-data checkmarks, CI, group rules */
+.eval-table.paper { min-width: 1180px; font-size: .86rem; }
+.eval-table.paper th, .eval-table.paper td { padding: .55rem .5rem; }
+.eval-table.paper td.chk { color: #9fd0ff; padding: .55rem .3rem; min-width: 2.2rem; }
+.eval-table.paper th[rowspan] { vertical-align: bottom; }
+.eval-table.paper td.method[rowspan] { vertical-align: middle; border-bottom: none; }
+.eval-table .ci { color: #8b94a3; font-size: .9em; }
+.eval-table b .ci { color: #c9d1dc; }
+.eval-table tbody tr.sep td { border-top: 1px solid rgba(255,255,255,.22); }
 .tag-ours { display: inline-block; margin-left: .4rem; font-size: .64rem; font-weight: 700; letter-spacing: .04em;
     padding: .12rem .45rem; border-radius: 999px; background: linear-gradient(90deg,#5aa8ff,#f3a3c8); color: #fff; vertical-align: middle; }
 

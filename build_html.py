@@ -127,47 +127,79 @@ def render_affils():
     return " &nbsp; ".join(f'<sup>{i+1}</sup>{a}' for i, a in enumerate(AFFIL))
 
 def build_eval_table():
-    # (method label, ours?, [ (AS, CR) x 4 categories + Avg ])
+    # Table 2 of the paper (closed-loop AlpaSim, 53 events x 2 rollouts).
+    # (model, [10K Rand, NV-OOD GT, NV-OOD Syn, Waymo-E2E GT, Waymo-E2E Syn], ours?,
+    #  [(AS, CI, CR) for Complex Int., Cyclists, Uncommon Veh., Work Zone, Avg])
     rows = [
-        ("Alpamayo R1", False,            ["0.457","71.4","0.534","50.0","0.575","50.0","0.683","50.0","0.534","58.8"]),
-        ("Alpamayo 1.5", False,           ["0.469","75.0","0.347","100.0","0.517","33.3","0.731","50.0","0.501","61.1"]),
-        ("+ SFT (10K Rand)", False,       ["0.659","25.0","0.670","0.0","0.733","0.0","0.936","0.0","0.716","11.1"]),
-        ("+ SFT (10K + NV-OOD GT)", False,["0.743","0.0","0.688","0.0","0.758","0.0","0.938","0.0","0.764","0.0"]),
-        ("+ SFT (10K + NV-OOD Syn)", True,["0.747","0.0","0.662","0.0","0.717","0.0","0.935","0.0","0.748","0.0"]),
-        ("+ SFT (10K + NV-OOD GT + Waymo-E2E GT)", False, ["0.691","12.5","0.691","0.0","0.735","0.0","0.958","0.0","0.736","5.6"]),
-        ("+ SFT (10K + NV-OOD Syn + Waymo-E2E Syn)", True, ["0.699","12.5","0.689","0.0","0.765","0.0","0.950","0.0","0.748","5.6"]),
+        ("Alpamayo R1", [0, 0, 0, 0, 0], False,
+         [("0.457", "0.028", "69.6"), ("0.534", "0.040", "50.0"), ("0.575", "0.027", "50.0"), ("0.683", "0.026", "50.0"), ("0.531", "0.026", "58.5")]),
+        ("Alpamayo 1.5", [0, 0, 0, 0, 0], False,
+         [("0.469", "0.030", "73.9"), ("0.347", "0.077", "100.0"), ("0.517", "0.031", "33.3"), ("0.731", "0.022", "50.0"), ("0.501", "0.032", "60.4")]),
+        ("Alpamayo R1 + SFT", [1, 0, 0, 0, 0], False,
+         [("0.659", "0.018", "26.1"), ("0.670", "0.035", "0.0"), ("0.733", "0.017", "0.0"), ("0.936", "0.012", "0.0"), ("0.717", "0.025", "11.3")]),
+        ("Alpamayo R1 + SFT", [1, 1, 0, 0, 0], False,
+         [("0.743", "0.014", "4.3"), ("0.688", "0.022", "0.0"), ("0.758", "0.014", "0.0"), ("0.938", "0.010", "0.0"), ("0.764", "0.019", "1.9")]),
+        ("Alpamayo R1 + SFT", [1, 0, 1, 0, 0], True,
+         [("0.747", "0.014", "6.5"), ("0.662", "0.027", "0.0"), ("0.717", "0.014", "2.8"), ("0.935", "0.012", "0.0"), ("0.748", "0.021", "3.8")]),
+        ("Alpamayo R1 + SFT", [1, 1, 0, 1, 0], False,
+         [("0.691", "0.018", "13.0"), ("0.691", "0.025", "0.0"), ("0.735", "0.014", "0.0"), ("0.958", "0.007", "0.0"), ("0.736", "0.024", "5.7")]),
+        ("Alpamayo R1 + SFT", [1, 0, 1, 0, 1], True,
+         [("0.699", "0.017", "13.0"), ("0.689", "0.027", "0.0"), ("0.765", "0.014", "0.0"), ("0.950", "0.009", "0.0"), ("0.749", "0.023", "5.7")]),
     ]
-    # mark Avg AS (index 8) and Avg CR (index 9): best=bold, 2nd=underline
-    def cell(val, col, is_cr):
-        # only decorate the Avg columns (8,9)
-        if col == 8:  # Avg AS, higher better -> best 0.764, 2nd 0.748
-            if val == "0.764": return f"<b>{val}</b>"
-            if val == "0.748": return f'<span class="u">{val}</span>'
-        if col == 9:  # Avg CR, lower better -> best 0.0, 2nd 5.6
-            if val == "0.0": return f"<b>{val}%</b>"
-            if val == "5.6": return f'<span class="u">{val}%</span>'
-        return val + ("%" if is_cr else "")
+    SEP_BEFORE = {2, 5}  # rule between baselines / NV-OOD recipes / + Waymo-E2E recipes, as in the paper
+
+    # best = bold, second-best = underline, ranked over the whole column (ties share a rank)
+    def ranks(col, metric, higher_better):
+        vals = sorted({float(r[3][col][metric]) for r in rows}, reverse=higher_better)
+        return vals[0], (vals[1] if len(vals) > 1 else None)
+
+    def mark(html_, val, best, second):
+        if float(val) == best:
+            return f"<b>{html_}</b>"
+        if float(val) == second:
+            return f'<span class="u">{html_}</span>'
+        return html_
+
     body = ""
-    for label, ours, vals in rows:
-        cls = ' class="ours"' if ours else ""
-        tag = ' <span class="tag-ours">Ours</span>' if ours else ""
-        tds = ""
-        for i, v in enumerate(vals):
-            is_cr = (i % 2 == 1)
-            grp = ' class="grp"' if i % 2 == 0 else ""
-            tds += f"<td{grp}>{cell(v, i, is_cr)}</td>"
-        body += f'<tr{cls}><td class="method">{label}{tag}</td>{tds}</tr>'
-    return f'''<div class="eval-table-wrap"><table class="eval-table">
+    for ri, (model, data, ours, cells) in enumerate(rows):
+        cls = []
+        if ours:
+            cls.append("ours")
+        if ri in SEP_BEFORE:
+            cls.append("sep")
+        tr = f'<tr class="{" ".join(cls)}">' if cls else "<tr>"
+        if ri < 2:
+            tds = f'<td class="method">{model}</td>'
+        elif ri == 2:
+            tds = f'<td class="method" rowspan="{len(rows) - 2}">{model}</td>'
+        else:
+            tds = ""
+        for k, on in enumerate(data):
+            grp = ' grp' if k in (0, 1, 3) else ''
+            tds += f'<td class="chk{grp}">{"&#10003;" if on else ""}</td>'
+        for c, (as_, ci, cr) in enumerate(cells):
+            b_as, s_as = ranks(c, 0, True)
+            b_cr, s_cr = ranks(c, 2, False)
+            as_html = mark(f'{as_}<span class="ci"> &plusmn; {ci}</span>', as_, b_as, s_as)
+            cr_html = mark(f"{cr}%", cr, b_cr, s_cr)
+            tds += f'<td class="grp">{as_html}</td><td>{cr_html}</td>'
+        body += f"{tr}{tds}</tr>"
+    return f'''<div class="eval-table-wrap"><table class="eval-table paper">
       <thead>
-        <tr><th class="method" rowspan="2">Model / Training data</th>
-            <th class="grp" colspan="2">Complex Int.</th><th colspan="2">Cyclists</th>
-            <th class="grp" colspan="2">Uncommon Veh.</th><th colspan="2">Work Zone</th>
-            <th class="grp" colspan="2">Average</th></tr>
-        <tr>
+        <tr><th class="method" rowspan="3">Model</th>
+            <th class="grp" colspan="5">Additional Training Data</th>
+            <th class="grp" colspan="8">Representative Long-tail Events</th>
+            <th class="grp" colspan="2" rowspan="2">Avg. (N&nbsp;=&nbsp;106)</th></tr>
+        <tr><th class="grp metric-sub" rowspan="2">10K<br>Rand</th>
+            <th class="grp" colspan="2">NV-OOD</th><th class="grp" colspan="2">Waymo-E2E</th>
+            <th class="grp" colspan="2">Complex Int.</th><th class="grp" colspan="2">Cyclists</th>
+            <th class="grp" colspan="2">Uncommon Veh.</th><th class="grp" colspan="2">Work Zone</th></tr>
+        <tr><th class="grp metric-sub">GT</th><th class="metric-sub">Syn</th>
+            <th class="grp metric-sub">GT</th><th class="metric-sub">Syn</th>
             <th class="grp metric-sub">AS&uarr;</th><th class="metric-sub">CR&darr;</th>
-            <th class="metric-sub">AS&uarr;</th><th class="metric-sub">CR&darr;</th>
             <th class="grp metric-sub">AS&uarr;</th><th class="metric-sub">CR&darr;</th>
-            <th class="metric-sub">AS&uarr;</th><th class="metric-sub">CR&darr;</th>
+            <th class="grp metric-sub">AS&uarr;</th><th class="metric-sub">CR&darr;</th>
+            <th class="grp metric-sub">AS&uarr;</th><th class="metric-sub">CR&darr;</th>
             <th class="grp metric-sub">AS&uarr;</th><th class="metric-sub">CR&darr;</th></tr>
       </thead>
       <tbody>{body}</tbody>
@@ -264,7 +296,7 @@ HTML = f"""<!DOCTYPE html>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-<link rel="stylesheet" href="assets/css/index.css?v=19">
+<link rel="stylesheet" href="assets/css/index.css?v=20">
 </head>
 <body>
 
@@ -390,11 +422,12 @@ HTML = f"""<!DOCTYPE html>
     <h2 class="section-title">OpenLongTail Improves VLA Driving Policies</h2>
     <p class="section-subtitle">Closed-Loop Evaluation in AlpaSim</p>
     <p class="section-sub">Fine-tuning Alpamayo-R1 with OpenLongTail-synthesized multi-view data improves closed-loop
-      driving robustness on 53 long-tail events, on par with training on ground-truth multi-camera capture.
-      AS = AlpaSim Score (higher is better); CR = Collision Rate (lower is better).</p>
+      driving robustness on 53 long-tail events (two rollouts each) and approaches training with ground-truth multi-camera capture.
+      AS = AlpaSim Score (higher is better; mean &plusmn; 95% bootstrap CI); CR = Collision Rate (lower is better).</p>
     {build_eval_table()}
-    <p class="fig-caption">OpenLongTail-synthesized data (<b>Ours</b>) lifts average AS to 0.748 and reduces the collision rate
-      to 0.0%, comparable to training on ground-truth multi-view data (0.764 AS).
+    <p class="fig-caption">Adding OpenLongTail-synthesized NVIDIA long-tail assets (NV-OOD Syn) raises average AS from 0.717
+      (nominal-only SFT) to 0.748 and lowers the collision rate from 11.3% to 3.8%, compared with 0.764 AS and 1.9% CR for
+      ground-truth assets (NV-OOD GT). Best and second-best results are shown in bold and underlined; highlighted rows use synthesized data.
       <br><span style="opacity:.8">SFT: supervised fine-tuning &nbsp;&middot;&nbsp; 10K Rand: 10K randomly sampled trajectories &nbsp;&middot;&nbsp;
       NV-OOD: NVIDIA PAV out-of-distribution subset &nbsp;&middot;&nbsp; GT: ground-truth multi-view &nbsp;&middot;&nbsp;
       Syn: OpenLongTail-synthesized multi-view.</span></p>

@@ -22,7 +22,7 @@ SCENES = [
 
 VID = "assets/videos"
 POS = "assets/posters"
-MV = "?v=2"  # scene clip/poster version: bump whenever those files are replaced
+MV = "?v=3"  # scene clip/poster version: bump whenever those files are replaced
 
 def v_attrs(src, poster):
     return (f'preload="none" muted loop playsinline poster="{poster}" '
